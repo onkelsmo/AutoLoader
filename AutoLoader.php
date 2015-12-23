@@ -1,31 +1,15 @@
 <?php
 class AutoLoader {
-    static private $classNames = array();
-    
-    public static function registerDirectory($dirName) {
-        $di = new DirectoryIterator($dirName);
-        foreach ($di as $file) {
-            if ($file->isDir() 
-                && !$file->isLink()
-                && !$file->isDot()){
-                self::registerDirectory($file->getPathname());
-            }elseif (substr ($file->getFilename (), -4) === '.php') {
-                // save the class name /path of a .php file found
-                $className = substr($file->getFilename(), 0, -4);
-                AutoLoader::registerClass($className, $file->getPathname());
-            }
-        }
-    }
-    
-    public static function registerClass($className, $fileName) {
-        AutoLoader::$classNames[$className] = $fileName;
-    }
-    
-    public static function loadClass($className) {
-        if (isset(AutoLoader::$classNames[$className])) {
-            require_once(AutoLoader::$classNames[$className]);
-        }
-    }
+	public function __construct($includePath) {
+		set_include_path($includePath);
+		spl_autoload_register(array($this, 'loadClass'));
+	}
+	/**
+	 * @param string $className
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+	 */
+	private function loadClass($className) {
+		@include(str_replace("\\", "/", $className) . '.php');
+	}
 }
-
-spl_autoload_register(array('AutoLoader', 'loadClass'));

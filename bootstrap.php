@@ -1,4 +1,3 @@
 <?php
 include_once ('AutoLoader.php');
-AutoLoader::registerDirectory('./classes/');
-
+(new AutoLoader('./IncludePath/'));
